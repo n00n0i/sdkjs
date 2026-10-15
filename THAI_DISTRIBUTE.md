@@ -165,5 +165,5 @@ RUN chmod 755 /var/www/onlyoffice/documentserver/server/FileConverter/bin/x2t
 
 ## Pull requests
 
-- sdkjs: `cursor/thai-distribute-master-703e` into `master` on n00n0i/sdkjs. Deploy from `cursor/thai-distribute-9.4.0-703e`.
-- core: not opened. The credential used here cannot push n00n0i/core. Use `core-patches/thai-distribute.patch` and the commands above.
+- sdkjs: https://github.com/n00n0i/sdkjs/pull/1 (`cursor/thai-distribute-master-703e` into `master`). Deploy from `cursor/thai-distribute-9.4.0-703e`.
+- core: not opened. The credential used here cannot push n00n0i/core, so there is no core pull request to link. Use `core-patches/thai-distribute.patch` and the commands above.
