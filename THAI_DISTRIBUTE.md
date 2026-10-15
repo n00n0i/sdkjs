@@ -11,6 +11,14 @@ Package version `9.4.0-129` is git tag `v9.4.0.129` in both repositories.
 
 The sdkjs pull request into `master` is branch `cursor/thai-distribute-master-703e`. Word editor sources on that tag and on `master` match; `master` only deletes `tests/` and exports `ApiWorkbook`. The pull request URL is at the bottom of this file.
 
+## Prebuilt package
+
+Linux x86_64 files for Document Server 9.4.0-129 are published at <https://github.com/n00n0i/sdkjs/releases/tag/thai-distribute-9.4.0-129>.
+
+Download `thai-distribute-9.4.0-129.tar.gz` and `SHA256SUMS` from that release. The archive contains patched `x2t`, the eight sdkjs bundles, `Dockerfile` (`FROM onlyoffice/documentserver:9.4.0`), and `install.sh`. Extract it on the server and run `sudo bash install.sh`. The script checks the package version, backs up the current `x2t` and bundles under `/var/backups`, copies the new files, runs `documentserver-flush-cache.sh`, and restarts with `supervisorctl` (or `systemctl restart ds-converter ds-docservice`).
+
+That `x2t` was linked against the libraries shipped in the 9.4.0-129 `FileConverter/bin` directory. It needs glibc 2.38 or newer, which Ubuntu 24.04 (the base of `onlyoffice/documentserver:9.4.0`) provides. A docx with `w:jc` values `both`, `distribute`, and `thaiDistribute` was converted to the editor binary and back; all three values were kept. The stock 9.4.0-129 converter writes all three as `both`.
+
 ## What was wrong
 
 Opening a `.docx` does not go through `word/fromToJSON.js`. x2t reads `w:jc` and writes one byte into the binary that sdkjs loads in `Serialize2.js`.
@@ -165,5 +173,5 @@ RUN chmod 755 /var/www/onlyoffice/documentserver/server/FileConverter/bin/x2t
 
 ## Pull requests
 
-- sdkjs: https://github.com/n00n0i/sdkjs/pull/1 (`cursor/thai-distribute-master-703e` into `master`). Deploy from `cursor/thai-distribute-9.4.0-703e`.
+- sdkjs: https://github.com/n00n0i/sdkjs/pull/1 (`cursor/thai-distribute-master-703e` into `master`). Deploy from `cursor/thai-distribute-9.4.0-703e`, or use the release <https://github.com/n00n0i/sdkjs/releases/tag/thai-distribute-9.4.0-129>.
 - core: not opened. The credential used here cannot push n00n0i/core, so there is no core pull request to link. Use `core-patches/thai-distribute.patch` and the commands above.
