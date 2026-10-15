@@ -4,12 +4,12 @@ Word paragraph alignment `w:jc w:val="thaiDistribute"` spreads leftover line wid
 
 Package version `9.4.0-129` is git tag `v9.4.0.129` in both repositories.
 
-| Repo | Tag commit | Branch with this change |
+| Repo | Tag commit | Where the change is |
 | --- | --- | --- |
-| [n00n0i/core](https://github.com/n00n0i/core) | `a016fc2868b9f99f59dd30aa2088e68bbe5104af` | `cursor/thai-distribute-x2t-9.4.0-703e` |
+| [n00n0i/core](https://github.com/n00n0i/core) | `a016fc2868b9f99f59dd30aa2088e68bbe5104af` | `core-patches/thai-distribute.patch` (push was denied; see below) |
 | [n00n0i/sdkjs](https://github.com/n00n0i/sdkjs) | `75b53d504bfd81bfa35d59bb57dd9e56f7c9235d` | `cursor/thai-distribute-9.4.0-703e` (deploy this one) |
 
-The sdkjs pull request into `master` is `cursor/thai-distribute-master-703e`. Word editor sources on that tag and on `master` match; `master` only deletes `tests/` and exports `ApiWorkbook`. Pull request URLs are at the bottom of this file.
+The sdkjs pull request into `master` is branch `cursor/thai-distribute-master-703e`. Word editor sources on that tag and on `master` match; `master` only deletes `tests/` and exports `ApiWorkbook`. The pull request URL is at the bottom of this file.
 
 ## What was wrong
 
@@ -86,7 +86,19 @@ deploy/sdkjs/visio/sdk-all-min.js
 
 Replacing the JavaScript bundles does not preserve `thaiDistribute` on open, and saving through the stock `x2t` writes `left`.
 
-The core branch is tag `v9.4.0.129` plus the paragraph `jc` commit. The same diff is `core-patches/thai-distribute.patch`.
+`core-patches/thai-distribute.patch` is that commit against tag `v9.4.0.129`. Pushing it to [n00n0i/core](https://github.com/n00n0i/core) returned 403 (`Permission to n00n0i/core.git denied to cursor[bot]`). The fork is visible, and this credential can push [n00n0i/sdkjs](https://github.com/n00n0i/sdkjs), but it cannot write the core fork. Apply the patch from a checkout that can push:
+
+```bash
+git clone --branch v9.4.0.129 --depth 1 https://github.com/ONLYOFFICE/core.git
+cd core
+git checkout -b cursor/thai-distribute-x2t-9.4.0-703e
+git apply /path/to/sdkjs/core-patches/thai-distribute.patch
+git commit -am "Keep distribute and thaiDistribute distinct in x2t paragraph jc."
+git push git@github.com:n00n0i/core.git v9.4.0.129:refs/heads/release/v9.4.0
+git push -u git@github.com:n00n0i/core.git cursor/thai-distribute-x2t-9.4.0-703e
+```
+
+Open the pull request into `release/v9.4.0` on the fork. The fork's `master` is a later merge, so a pull request into `master` would mix this fix with the rest of the 9.4 history. The tag is not on the fork until that `release/v9.4.0` push.
 
 x2t is the native converter built from `X2tConverter/build/Qt/X2tSLN.pro`. ONLYOFFICE builds it with [build_tools](https://github.com/ONLYOFFICE/build_tools) (`scripts/build_sln.py`) against a full core tree and its third-party libraries. Use the build_tools revision that produced Document Server 9.4.0-129, check out `cursor/thai-distribute-x2t-9.4.0-703e` (or apply the patch onto a core tree already at `v9.4.0.129`), and build the `x2t` target.
 
@@ -147,10 +159,11 @@ RUN chmod 755 /var/www/onlyoffice/documentserver/server/FileConverter/bin/x2t
 
 `cursor/thai-distribute-9.4.0-703e` is already based on `v9.4.0.129`. Cherry-pick that commit onto another sdkjs release tag. Cherry-pick `cursor/thai-distribute-x2t-9.4.0-703e` onto the matching core tag, or `git apply core-patches/thai-distribute.patch` from a core checkout at `v9.4.0.129`. Rebuild both artifacts from those commits. Do not copy 9.4.0-129 bundles onto a different server version.
 
+## Tests
+
+`node tests/word/unit-tests/run-thai-distribute.js` and `tests/word/unit-tests/thai-distribute.html` check the three `w:jc` values (bytes 3, 4, and 6), cluster gaps, and that `ดูการบ้าน` breaks after `ดู`. On `cursor/thai-distribute-9.4.0-703e`, `tests/word/document-calculation/paragraph.html` also lays that string out in the editor and expects lines `ดู` and `การบ้าน`. `master` no longer has that harness, so the layout script is not wired there.
+
 ## Pull requests
 
-- core: branch `cursor/thai-distribute-x2t-9.4.0-703e` into `release/v9.4.0` on n00n0i/core (that base is tag `v9.4.0.129`; the fork's `master` is a later merge).
-- sdkjs: branch `cursor/thai-distribute-master-703e` into `master` on n00n0i/sdkjs.
-- Deploy sdkjs from `cursor/thai-distribute-9.4.0-703e`.
-
-URLs are filled in once the pull requests exist.
+- sdkjs: `cursor/thai-distribute-master-703e` into `master` on n00n0i/sdkjs. Deploy from `cursor/thai-distribute-9.4.0-703e`.
+- core: not opened. The credential used here cannot push n00n0i/core. Use `core-patches/thai-distribute.patch` and the commands above.
