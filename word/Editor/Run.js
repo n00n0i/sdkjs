@@ -5323,6 +5323,16 @@ ParaRun.prototype.Recalculate_Range_Width = function(PRSC, _CurLine, _CurRange)
             case para_Separator:
             case para_ContinuationSeparator:
             {
+				// Thai vowel/tone marks stay with the preceding base. They are not
+				// extra letters, so justify does not open a gap in front of them.
+				if (Item.IsCombiningMark && Item.IsCombiningMark())
+				{
+					PRSC.Range.W += Item.GetWidth(textPr);
+					if (Item.IsSpaceAfter())
+						PRSC.Word = false;
+					break;
+				}
+
                 PRSC.Letters++;
 
                 if ( true !== PRSC.Word )
@@ -5497,6 +5507,29 @@ ParaRun.prototype.Recalculate_Range_Width = function(PRSC, _CurLine, _CurRange)
     }
 };
 
+ParaRun.prototype.private_NextIsCombiningMark = function(nPos)
+{
+	for (let i = nPos + 1; i < this.Content.length; ++i)
+	{
+		let oItem = this.Content[i];
+		if (!oItem)
+			continue;
+		if (oItem.IsCombiningMark && oItem.IsCombiningMark())
+			return true;
+		if ((oItem.IsText && oItem.IsText())
+			|| oItem.Type === para_Space
+			|| oItem.Type === para_Tab
+			|| oItem.Type === para_NewLine
+			|| oItem.Type === para_End
+			|| (oItem.IsDrawing && oItem.IsDrawing()))
+			return false;
+	}
+
+	let oNext = this.GetNextRunElementEx(this.Content.length);
+	if (!oNext || !oNext.Element || !oNext.Element.IsCombiningMark)
+		return false;
+	return !!oNext.Element.IsCombiningMark();
+};
 ParaRun.prototype.Recalculate_Range_Spaces = function(PRSA, _CurLine, _CurRange, CurPage)
 {
     var CurLine  = _CurLine - this.StartLine;
@@ -5537,14 +5570,25 @@ ParaRun.prototype.Recalculate_Range_Spaces = function(PRSA, _CurLine, _CurRange,
             case para_ContinuationSeparator:
             {
                 let WidthVisible = 0;
+				let isMark = !!(Item.IsCombiningMark && Item.IsCombiningMark());
+				let nextIsMark = this.private_NextIsCombiningMark(Pos);
+				let takesGap = AscWord.clusterTakesJustify(nextIsMark);
 
-                if ( 0 !== PRSA.LettersSkip )
+                if (isMark)
+                {
+                    WidthVisible = Item.GetWidth();
+                    if (0 === PRSA.LettersSkip && takesGap)
+                        WidthVisible += PRSA.JustifyWord;
+                }
+                else if ( 0 !== PRSA.LettersSkip )
                 {
                     WidthVisible = Item.GetWidth();
                     PRSA.LettersSkip--;
                 }
-                else
+                else if (takesGap)
                     WidthVisible = Item.GetWidth() + PRSA.JustifyWord;
+                else
+                    WidthVisible = Item.GetWidth();
 
                 Item.SetWidthVisible(WidthVisible, this.Get_CompiledPr(false));
 

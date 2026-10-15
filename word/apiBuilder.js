@@ -32197,6 +32197,10 @@
 			return align_Justify;
 		else if ("center" === sJc)
 			return align_Center;
+		else if ("distribute" === sJc)
+			return align_Distributed;
+		else if ("thaiDistribute" === sJc || "thaiDist" === sJc)
+			return align_ThaiDistributed;
 
 		return undefined;
 	}
@@ -32211,6 +32215,10 @@
 				return "center";
 			case align_Justify : 
 				return "both";
+			case align_Distributed:
+				return "distribute";
+			case align_ThaiDistributed:
+				return "thaiDistribute";
 		}
 
 		return "left";

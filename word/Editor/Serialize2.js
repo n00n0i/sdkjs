@@ -2448,7 +2448,7 @@ function Binary_pPrWriter(memory, oNumIdMap, oBinaryHeaderFooterTableWriter, sav
         {
             this.memory.WriteByte(c_oSerProp_pPrType.Jc);
             this.memory.WriteByte(c_oSerPropLenType.Byte);
-            this.memory.WriteByte(pPr.Jc);
+            this.memory.WriteByte(AscWord.paraAlignToBinaryByte(pPr.Jc));
         }
         //KeepLines
         if(null != pPr.KeepLines)
@@ -9304,7 +9304,7 @@ function Binary_pPrReader(doc, oReadResult, stream)
                     });
                 break;
             case c_oSerProp_pPrType.Jc:
-				pPr.Jc = this.stream.GetUChar();
+				pPr.Jc = AscWord.paraAlignFromBinaryByte(this.stream.GetUChar());
                 break;
             case c_oSerProp_pPrType.KeepLines:
 				pPr.KeepLines = this.stream.GetBool();
