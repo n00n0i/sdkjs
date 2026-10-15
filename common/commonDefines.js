@@ -740,6 +740,8 @@ window.AscCommon.g_cIsBeta = "false";
 	var align_Justify = 3;
 	var align_Distributed = 4;
 	var align_CenterContinuous = 5;
+	// Byte 6 matches x2t align_ThaiDistributed (w:jc thaiDistribute). 5 stays center-continuous.
+	var align_ThaiDistributed = 6;
 
 
 	var linerule_AtLeast = 0x00;
@@ -5768,6 +5770,7 @@ window.AscCommon.g_cIsBeta = "false";
 	window['AscCommon']['align_Justify'] = window['AscCommon'].align_Justify = align_Justify;
 	window['AscCommon']['align_Distributed'] = window['AscCommon'].align_Distributed = align_Distributed;
 	window['AscCommon']['align_CenterContinuous'] = window['AscCommon'].align_CenterContinuous = align_CenterContinuous;
+	window['AscCommon']['align_ThaiDistributed'] = window['AscCommon'].align_ThaiDistributed = align_ThaiDistributed;
 
 
 	window["AscCommon"]["c_oAscFormatPainterState"]    = c_oAscFormatPainterState;

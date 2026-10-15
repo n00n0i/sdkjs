@@ -105,6 +105,9 @@
 			|| (0x20D0 <= nCodePoint && nCodePoint <= 0x20F0)
 			|| (0xFE00 <= nCodePoint && nCodePoint <= 0xFE00)
 			|| (0xFE20 <= nCodePoint && nCodePoint <= 0xFE2D)
+			|| 0x0E31 === nCodePoint
+			|| (0x0E34 <= nCodePoint && nCodePoint <= 0x0E3A)
+			|| (0x0E47 <= nCodePoint && nCodePoint <= 0x0E4E)
 		);
 	}
 
@@ -582,6 +585,9 @@
 	CRunText.prototype.CanBeAtBeginOfLine = function()
 	{
 		if (this.IsNBSP())
+			return false;
+
+		if (this.IsCombiningMark())
 			return false;
 
 		return (!(AscCommon.g_aPunctuation[this.Value] & AscCommon.PUNCTUATION_FLAG_CANT_BE_AT_BEGIN));

@@ -559,6 +559,9 @@ Paragraph.prototype.recalculateRangeFast = function(iRange, iLine)
 };
 Paragraph.prototype.private_RecalculateFastRange       = function(PRS, CurRange, CurLine)
 {
+	if (AscWord.applyThaiLineBreaks)
+		AscWord.applyThaiLineBreaks(this);
+
     // Определим номер страницы
     var CurPage  = 0;
     var PagesLen = this.Pages.length;
@@ -678,6 +681,9 @@ Paragraph.prototype.private_RecalculatePage = function(CurPage, isFast)
 };
 Paragraph.prototype.private_RecalculatePageInternal = function(PRS, CurPage, bFirstRecalculate)
 {
+	if (AscWord.applyThaiLineBreaks)
+		AscWord.applyThaiLineBreaks(this);
+
 	PRS.Reset_Page(this, CurPage);
 
     var Pr     = this.Get_CompiledPr();
@@ -2128,6 +2134,46 @@ Paragraph.prototype.private_RecalculateLineAlign       = function(CurLine, CurPa
 								
 								JustifySpace = 0;
 							}
+						}
+						break;
+					}
+					case AscCommon.align_Distributed:
+					case AscCommon.align_ThaiDistributed:
+					{
+						// Equal extra on each inter-cluster gap and each counted space.
+						// thaiDistribute leaves the last line and soft breaks unstretched.
+						// distribute stretches every line, including the last.
+						var bStretch = true;
+						if (AscCommon.align_ThaiDistributed === jc)
+						{
+							var bLastRange = (CurRange === RangesCount - 1);
+							var bEndLine = !!(Line.Info & paralineinfo_End);
+							var bSoftBreak = !!(PRSC.LineBreak || (Line.Info & paralineinfo_BreakLine));
+							if (PRSC.ParaEnd || (bLastRange && bEndLine) || bSoftBreak)
+								bStretch = false;
+						}
+
+						var nExtra = RangeWidth - Range.W;
+						var oGaps = AscWord.calcDistributeGaps(nExtra, PRSC.Letters, PRSC.Spaces, bStretch);
+						if (bStretch && oGaps.gaps > 0)
+						{
+							if (bRtlAlign)
+								X = Range.X - rtlShift;
+							else
+								X = Range.X;
+
+							JustifyWord = oGaps.justifyWord;
+							JustifySpace = oGaps.justifySpace;
+						}
+						else
+						{
+							if (bRtlAlign)
+								X = Range.X + RangeWidth - Range.W - rtlShift;
+							else
+								X = Range.X;
+
+							JustifyWord = 0;
+							JustifySpace = 0;
 						}
 						break;
 					}
