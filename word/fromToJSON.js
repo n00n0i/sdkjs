@@ -16336,6 +16336,9 @@
 			case AscCommon.align_Distributed:
 				oResult["lvlJc"] = "distribute";
 				break;
+			case AscCommon.align_ThaiDistributed:
+				oResult["lvlJc"] = "thaiDistribute";
+				break;
 		}
 
 		switch (this.Suff)
@@ -16412,6 +16415,10 @@
 				break;
 			case "distribute":
 				this.Jc = AscCommon.align_Distributed;
+				break;
+			case "thaiDistribute":
+			case "thaiDist":
+				this.Jc = AscCommon.align_ThaiDistributed;
 				break;
 		}
 
@@ -16512,6 +16519,14 @@
 						oResult["algn"] = "r";
 						break;
 					}
+					case AscCommon.align_Distributed: {
+						oResult["algn"] = "dist";
+						break;
+					}
+					case AscCommon.align_ThaiDistributed: {
+						oResult["algn"] = "thaiDist";
+						break;
+					}
 				}
 			}
 
@@ -16574,6 +16589,9 @@
 					break;
 				case AscCommon.align_Distributed:
 					sJc = "distribute";
+					break;
+				case AscCommon.align_ThaiDistributed:
+					sJc = "thaiDistribute";
 					break;
 			}
 
@@ -16649,7 +16667,7 @@
 						break;
 					}
 					case "dist": {
-						this.Jc = AscCommon.align_Justify;
+						this.Jc = AscCommon.align_Distributed;
 						break;
 					}
 					case "just": {
@@ -16669,7 +16687,7 @@
 						break;
 					}
 					case "thaiDist": {
-						this.Jc = AscCommon.align_Justify;
+						this.Jc = AscCommon.align_ThaiDistributed;
 						break;
 					}
 				}
@@ -16751,6 +16769,10 @@
 					break;
 				case "distribute":
 					nJc = AscCommon.align_Distributed;
+					break;
+				case "thaiDistribute":
+				case "thaiDist":
+					nJc = AscCommon.align_ThaiDistributed;
 					break;
 			}
 

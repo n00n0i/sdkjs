@@ -51,6 +51,8 @@ var align_Right = AscCommon.align_Right;
 var align_Left = AscCommon.align_Left;
 var align_Center = AscCommon.align_Center;
 var align_Justify = AscCommon.align_Justify;
+var align_Distributed = AscCommon.align_Distributed;
+var align_ThaiDistributed = AscCommon.align_ThaiDistributed;
 var g_oDocumentUrls = AscCommon.g_oDocumentUrls;
 var History = AscCommon.History;
 var pptx_content_loader = AscCommon.pptx_content_loader;
@@ -302,6 +304,8 @@ CopyProcessor.prototype =
                     case align_Center: apPr.push("text-align:center");break;
                     case align_Right: apPr.push("text-align:right");break;
                     case align_Justify: apPr.push("text-align:justify");break;
+                    case align_Distributed: apPr.push("text-align:justify"); apPr.push("text-justify:distribute"); break;
+                    case align_ThaiDistributed: apPr.push("text-align:justify"); apPr.push("text-justify:inter-cluster"); break;
                 }
             }
             //KeepLines , WidowControl
@@ -8892,6 +8896,15 @@ PasteProcessor.prototype =
 					Jc = align_Right;
 				} else if (-1 !== text_align.indexOf('justify')) {
 					Jc = align_Justify;
+					var text_justify = t._getStyle(node, computedStyle, "text-justify");
+					if (text_justify)
+					{
+						var tj = String(text_justify).toLowerCase();
+						if (-1 !== tj.indexOf("thai") || -1 !== tj.indexOf("inter-cluster"))
+							Jc = align_ThaiDistributed;
+						else if (-1 !== tj.indexOf("distribute") || -1 !== tj.indexOf("inter-character") || -1 !== tj.indexOf("inter-ideograph"))
+							Jc = align_Distributed;
+					}
 				}
 				if (null != Jc) {
 					Para.Set_Align(Jc, false);

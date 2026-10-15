@@ -1,0 +1,54 @@
+diff --git a/OOXML/Binary/Document/BinReader/BinaryReaderD.cpp b/OOXML/Binary/Document/BinReader/BinaryReaderD.cpp
+index 3afccca9..937378ba 100644
+--- a/OOXML/Binary/Document/BinReader/BinaryReaderD.cpp
++++ b/OOXML/Binary/Document/BinReader/BinaryReaderD.cpp
+@@ -958,10 +958,12 @@ int Binary_pPrReader::ReadContent(BYTE type, long length, void* poResult)
+ 
+ 		switch (jc)
+ 		{
+-			case align_Right: pPPr->m_oJc->m_oVal->SetValueFromByte(3); break;
+-			case align_Left: pPPr->m_oJc->m_oVal->SetValueFromByte(8); break;
+-			case align_Center: pPPr->m_oJc->m_oVal->SetValueFromByte(1); break;
+-			case align_Justify: pPPr->m_oJc->m_oVal->SetValueFromByte(0); break;
++			case align_Right: pPPr->m_oJc->m_oVal->SetValueFromByte(3); break; // jcEnd -> "right"
++			case align_Left: pPPr->m_oJc->m_oVal->SetValueFromByte(8); break; // jcStart -> "left"
++			case align_Center: pPPr->m_oJc->m_oVal->SetValueFromByte(1); break; // jcCenter
++			case align_Justify: pPPr->m_oJc->m_oVal->SetValueFromByte(0); break; // jcBoth
++			case align_Distributed: pPPr->m_oJc->m_oVal->SetValueFromByte(2); break; // jcDistribute
++			case align_ThaiDistributed: pPPr->m_oJc->m_oVal->SetValueFromByte(9); break; // jcThaiDistribute
+ 		}
+ 	}break;
+ 	case c_oSerProp_pPrType::KeepLines:
+diff --git a/OOXML/Binary/Document/BinWriter/BinReaderWriterDefines.h b/OOXML/Binary/Document/BinWriter/BinReaderWriterDefines.h
+index 3dd5791c..565b420b 100644
+--- a/OOXML/Binary/Document/BinWriter/BinReaderWriterDefines.h
++++ b/OOXML/Binary/Document/BinWriter/BinReaderWriterDefines.h
+@@ -41,7 +41,10 @@ const double eps     = 0.001;
+ const int align_Right   = 0;
+ const int align_Left    = 1;
+ const int align_Center  = 2;
+-const int align_Justify = 3;
++const int align_Justify = 3; // w:jc both
++// Bytes must match sdkjs common/commonDefines.js. 5 is align_CenterContinuous there.
++const int align_Distributed     = 4; // w:jc distribute
++const int align_ThaiDistributed = 6; // w:jc thaiDistribute
+ 
+ const int vertalignjc_Top    = 0x00;
+ const int vertalignjc_Center = 0x01;
+diff --git a/OOXML/Binary/Document/BinWriter/BinaryWriterD.cpp b/OOXML/Binary/Document/BinWriter/BinaryWriterD.cpp
+index 3c6f3ff0..e18a66e1 100644
+--- a/OOXML/Binary/Document/BinWriter/BinaryWriterD.cpp
++++ b/OOXML/Binary/Document/BinWriter/BinaryWriterD.cpp
+@@ -1109,9 +1109,9 @@ void Binary_pPrWriter::Write_pPr(const OOX::Logic::CParagraphProperty& pPr)
+ 			case SimpleTypes::jcLeft: m_oBcw.m_oStream.WriteBYTE(align_Left);break;
+ 			case SimpleTypes::jcEnd:
+ 			case SimpleTypes::jcRight: m_oBcw.m_oStream.WriteBYTE(align_Right);break;
+-			case SimpleTypes::jcBoth:
+-			case SimpleTypes::jcThaiDistribute:
+-			case SimpleTypes::jcDistribute: m_oBcw.m_oStream.WriteBYTE(align_Justify);break;
++			case SimpleTypes::jcBoth: m_oBcw.m_oStream.WriteBYTE(align_Justify);break;
++			case SimpleTypes::jcDistribute: m_oBcw.m_oStream.WriteBYTE(align_Distributed);break;
++			case SimpleTypes::jcThaiDistribute: m_oBcw.m_oStream.WriteBYTE(align_ThaiDistributed);break;
+ 			default: m_oBcw.m_oStream.WriteBYTE(align_Left);break;
+ 			}
+ 		}

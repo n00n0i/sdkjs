@@ -777,6 +777,8 @@
 				case AscCommon.align_Right:		align = 'right';	break;
 				case AscCommon.align_Justify:	align = 'both';		break;
 				case AscCommon.align_Center:	align = 'center';	break;
+				case AscCommon.align_Distributed:	align = 'distribute';	break;
+				case AscCommon.align_ThaiDistributed:	align = 'thaiDistribute';	break;
 				default:						align = 'center';
 			}
 			return "\tdoc.GetCurrentParagraph().SetJc(\"" + align + "\");\n"
@@ -1500,6 +1502,8 @@
 				case AscCommon.align_Right:		align = 'right';	break;
 				case AscCommon.align_Justify:	align = 'both';		break;
 				case AscCommon.align_Center:	align = 'center';	break;
+				case AscCommon.align_Distributed:	align = 'distribute';	break;
+				case AscCommon.align_ThaiDistributed:	align = 'thaiDistribute';	break;
 				default:						align = 'center';
 			}
 			return "\tApi.GetSelection().SetAlignHorizontal(\"" + align + "\");\n"
@@ -1958,6 +1962,8 @@
 				case AscCommon.align_Right:		align = 'right';	break;
 				case AscCommon.align_Justify:	align = 'justify';	break;
 				case AscCommon.align_Center:	align = 'center';	break;
+				case AscCommon.align_Distributed:	align = 'distribute';	break;
+				case AscCommon.align_ThaiDistributed:	align = 'thaiDistribute';	break;
 				default:						align = 'center';
 			}
 			return "\tApi.GetSelection().GetShapes().forEach(function(shape) {\n" +

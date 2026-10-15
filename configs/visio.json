@@ -251,6 +251,8 @@
 			"word/Editor/HyperlinkChanges.js",
 			"word/Editor/Field.js",
 			"word/Editor/FieldChanges.js",
+			"word/Editor/Thai/thai-dict.js",
+			"word/Editor/Thai/thai-break.js",
 			"word/Editor/Run.js",
 			"word/Editor/PresentationField.js",
 			"word/Editor/RunChanges.js",

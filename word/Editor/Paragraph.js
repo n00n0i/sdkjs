@@ -2165,6 +2165,9 @@ Paragraph.prototype.GetCalculatedCurPosXY = function()
 };
 Paragraph.prototype.RecalculateMinMaxContentWidth = function(isRotated)
 {
+	if (AscWord.applyThaiLineBreaks)
+		AscWord.applyThaiLineBreaks(this);
+
 	var MinMax = new CParagraphMinMaxContentWidth();
 
 	var Count = this.Content.length;
